@@ -1,0 +1,46 @@
+@startuml
+title Умный дом: C4 - Container
+
+!include <C4/C4_Container>
+
+top to bottom direction
+
+Person(user, "Пользователь")
+Person(admin, "Администратор")
+System_Boundary(system, "Система Умный дом") {
+    Container(apiGateway, "АPI Gateway", "Kusk", "Маршрутизация запросов, аутентификация, авторизация")
+
+    Container(telemetryService, "Телеметрия", "Java", "Обработка информации с датчиков")
+    Container(deviceService, "Управление устройствами", "Java", "Управление устройствами, поддержание заданных параметров")
+    Container(userService, "Управление пользователями", "Java", "Управление пользователями")
+
+    ContainerDb(telemetryDb, "БД Телеметрии", "ClickHouse")
+    ContainerDb(deviceDb, "БД Утсройств", "PostgreSQL")
+    ContainerDb(userDb, "БД Пользователей", "PostgreSQL")
+    ContainerQueue(kafka, "Шина данных", "Kafka")
+}
+
+System_Ext(device, "Устройства", "Async API")
+
+
+Rel(user, apiGateway, "Управляет состоянием дома", "HTTPS")
+Rel(admin, apiGateway, "Управляет Пользователями", "HTTPS")
+
+Rel(apiGateway, telemetryService, "Получить телеметрию", "HTTPS")
+Rel(apiGateway, deviceService, "Выполнить команду, добавить устройство", "HTTPS")
+Rel(apiGateway, userService, "CRUD: пользовательские настройки", "HTTPS")
+Rel(apiGateway, userService, "Администрирование пользователей", "HTTPS")
+
+Rel(deviceService, kafka, "Публикация команды")
+Rel_L(kafka, telemetryService, "Получение телеметрии")
+
+Rel(deviceService, deviceDb, "CRUD")
+Rel(telemetryService, telemetryDb, "CRUD")
+Rel(userService, userDb, "CRUD")
+
+
+Rel(kafka, device, "Получение команды")
+Rel(device, kafka, "Публикация данных телеметрии")
+
+
+@enduml

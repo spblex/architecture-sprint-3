@@ -1,0 +1,34 @@
+@startuml
+title Умный дом: C4 - Code (Устройство)
+
+top to bottom direction
+
+class DeviceInfo {
+    UUID deviceId
+    string vendor
+    string version
+    string type
+
+    private DeviceInfo()
+    static INSTANCE()
+}
+
+class CommandDTO {
+    UUID deviceId
+    integer status
+}
+
+class KafkaService {
+    void onGetCommand(CommandDTO command)
+    void publishStatus(integer status)
+}
+
+class DeviceDriver {
+    boolean setStatus(integer status)
+    integer getStatus()
+}
+
+KafkaService --> DeviceDriver : setStatus(command.status)
+DeviceDriver --> KafkaService : publishStatus(getStatus())
+
+@enduml

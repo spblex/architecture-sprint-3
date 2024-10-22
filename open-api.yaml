@@ -1,0 +1,223 @@
+openapi: 3.0.3
+info:
+  title: Управление устройствами
+  description: Интерфейс для управления устройствами
+  version: 1.0.0
+paths:
+  /device:
+    post:
+      summary: Добавляет пользовательское устройство в систему
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                device_type:
+                  type: string
+                  example: TYPE1
+                serial_number:
+                  type: string
+                  example: ABC123
+                status:
+                  type: integer
+                  example: 0
+      responses:
+        '200':
+          description: успех
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+        '404':
+          description: устройство не найдено
+        '500':
+          description: ошибка сервера
+  /device/{id}:
+    get:
+      summary: Возвращает подробную информацию об устройстве
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: успех
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  device_type:
+                    type: string
+                    example: TYPE1
+                  serial_number:
+                    type: string
+                    example: ABC123
+                  status:
+                    type: integer
+                    example: 0
+        '404':
+          description: устройство не найдено
+        '500':
+          description: ошибка сервера
+    put:
+      summary: Обновляет информацию об устройстве
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                device_type:
+                  type: string
+                  example: TYPE1
+                serial_number:
+                  type: string
+                  example: ABC123
+                status:
+                  type: integer
+                  example: 0
+      responses:
+        '200':
+          description: успех
+        '404':
+          description: устройство не найдено
+        '500':
+          description: ошибка сервера
+    delete:
+      summary: Удаляет устройство из системы
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: успех
+        '404':
+          description: устройство не найдено
+        '500':
+          description: ошибка сервера
+  /device/settings/{id}:
+    get:
+      summary: Возвращает подробную информацию о пользовательских настройках устройства
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: успех
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  cron:
+                    type: string
+                    example: 0 8 * * *
+        '404':
+          description: устройство не найдено
+        '500':
+          description: ошибка сервера
+    post:
+      summary: Возвращает подробную информацию о пользовательских настройках устройства
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cron:
+                  type: string
+                  example: 0 8 * * *
+      responses:
+        '200':
+          description: успех
+        '404':
+          description: устройство не найдено
+        '500':
+          description: ошибка сервера
+  /device/status/{id}:
+    get:
+      summary: Возвращает информацию о состоянии устройства
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: успех
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  status:
+                    type: integer
+                    example: 0
+        '404':
+          description: устройство не найдено
+        '500':
+          description: ошибка сервера
+    post:
+      summary: Устанавливает состояние устройству
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: integer
+                  example: 0
+      responses:
+        '200':
+          description: успех
+        '404':
+          description: устройство не найдено
+        '500':
+          description: ошибка сервера
