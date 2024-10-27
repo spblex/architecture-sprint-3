@@ -221,3 +221,29 @@ paths:
           description: устройство не найдено
         '500':
           description: ошибка сервера
+  /device/command/{id}:
+    post:
+      summary: Отправляет команду устройству
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: string
+                  example: -10
+      responses:
+        '200':
+          description: успех
+        '404':
+          description: устройство не найдено
+        '500':
+          description: ошибка сервера

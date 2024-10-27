@@ -1,0 +1,74 @@
+openapi: 3.0.3
+info:
+  title: Телеметрия
+  description: Интерфейс для получения данных телеметрии
+  version: 1.0.0
+paths:
+  /telemetry/device/{id}/latest:
+    get:
+      summary: Возвращает последние данные телеметрии устройства
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: успех
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  timestamp:
+                    type: string
+                    example: 2024-10-27 12:00:00
+                  data:
+                    type: string
+                    example: -10
+                  status:
+                    type: integer
+                    example: 1
+        '404':
+          description: устройство не найдено
+        '500':
+          description: ошибка сервера
+  /telemetry/device/{id}/history:
+    get:
+      summary: Возвращает исторические данные телеметрии устройства
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: успех
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    timestamp:
+                      type: string
+                      example: 2024-10-27 12:00:00
+                    data:
+                      type: string
+                      example: -10
+                    status:
+                      type: integer
+                      example: 1
+        '404':
+          description: устройство не найдено
+        '500':
+          description: ошибка сервера

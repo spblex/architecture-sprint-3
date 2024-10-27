@@ -39,6 +39,7 @@ entity Telemetry {
   --
   timestamp datetime
   integer status
+  string data
 }
 
 Telemetry }o-- Device
