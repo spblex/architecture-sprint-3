@@ -1,0 +1,41 @@
+@startuml
+title Умный дом: C4 - Component (Управление устройствами)
+
+!include <C4/C4_Component>
+
+top to bottom direction
+
+Container_Ext(apiGateway, "АPI Gateway", "Kusk", "Маршрутизация запросов, балансировка нагрузки, аутентификация, авторизация")
+
+Container(deviceService, "Управление устройствами", "Java") {
+    Component(deviceCRUDController, "DeviceCRUDController", "Администрирование устройств")
+
+    Component(deviceGetSettingsController, "DeviceGetSettingsController", "Чтение параметров устройства")
+    Component(deviceSetSettingsController, "DeviceSetSettingsController", "Установление параметров устройства")
+
+    Component(dbComponent, "DbComponent", "Сервис работы с БД")
+    Component(commandService, "СommandService", "Публикация команд")
+
+    Component(scheduler, "scheduler", "Выполнение задания по рассписанию")
+}
+
+ContainerQueue_Ext(kafka, "Шина данных", "Kafka")
+ContainerDb_Ext(deviceDb, "БД Утсройств", "PostgreSQL")
+
+Rel(apiGateway, deviceCRUDController, "CRUD операции с устройствами", "HTTPS")
+Rel(apiGateway, deviceGetSettingsController, "Запрос параметров устройства", "HTTPS")
+Rel(apiGateway, deviceSetSettingsController, "Установление параметров устройства", "HTTPS")
+
+Rel(deviceCRUDController, dbComponent, "CRUD операции с устройствами")
+Rel(deviceGetSettingsController, dbComponent, "Чтение параметров устройства")
+Rel(deviceSetSettingsController, dbComponent, "Установление параметров устройства")
+Rel(deviceSetSettingsController, commandService, "Установление параметров устройства")
+Rel(scheduler, commandService, "Установление параметров устройства")
+
+
+Rel(dbComponent, deviceDb, "CRUD")
+
+Rel(commandService, kafka, "Публикация команды")
+
+
+@enduml

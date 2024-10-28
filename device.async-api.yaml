@@ -1,0 +1,31 @@
+asyncapi: 3.0.0
+info:
+  title: Управление устройствами
+  version: 1.0
+channels:
+  device.command:
+    address: device.command
+    messages:
+      publish.message:
+        name: deviceCommand
+        title: Отправляет команду устройству
+        payload:
+          type: object
+          properties:
+            device_id:
+              type: integer
+            command:
+              type: string
+            data:
+              type: integer
+          examples:
+            - device_id: 1
+              command: SET_POWER
+              data: 123
+operations:
+  device.command.publish:
+    action: send
+    channel:
+      $ref: '#/channels/device.command'
+    messages:
+      - $ref: '#/channels/device.command/messages/publish.message'

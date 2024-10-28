@@ -1,0 +1,49 @@
+@startuml
+
+entity User {
+  integer id
+  --
+  string first_name
+  string last_name
+  string patronymic_name
+}
+
+entity House {
+  integer id
+  --
+  integer user_id
+  --
+  string address
+}
+
+entity DeviceType {
+  integer id
+  --
+  string code
+}
+
+entity Device {
+  integer id
+  --
+  integer type_id
+  integer house_id
+  --
+  string serial_number
+  integer status
+}
+
+entity Telemetry {
+  integer id
+  --
+  integer device_id
+  --
+  timestamp datetime
+  integer status
+  string data
+}
+
+Telemetry }o-- Device
+House }|-- User
+House }o-- Device
+Device ||-- DeviceType
+@enduml

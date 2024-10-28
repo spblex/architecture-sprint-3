@@ -1,85 +1,70 @@
-# Базовая настройка
+# Подзадание 1.1: Анализ и планирование
 
-## Запуск minikube
+[c4_context.puml](c4_context.puml)
 
-[Инструкция по установке](https://minikube.sigs.k8s.io/docs/start/)
+## Функциональность монолитного приложения:
 
-```bash
-minikube start
-```
+* Управление отоплением:
+  * Пользователи могут удалённо включать/выключать отопление в своих домах.
+  * Пользователи могут устанавливать желаемую температуру.
+  * Система автоматически поддерживает заданную температуру, регулируя подачу тепла.
+* Мониторинг температуры:
+  * Система получает данные о температуре с датчиков, установленных в домах.
+  * Пользователи могут просматривать текущую температуру в своих домах через веб-интерфейс.
 
-## Добавление токена авторизации GitHub
+## Архитектура монолитного приложения:
+* Язык программирования: Java
+* База данных: PostgreSQL
+* Архитектура: Монолитная, все компоненты системы (обработка запросов, бизнес-логика, работа с данными) находятся в рамках одного приложения.
+* Взаимодействие: Синхронное, запросы обрабатываются последовательно.
+* Масштабируемость: Ограничена, так как монолит сложно масштабировать по частям.
+* Развертывание: Требует остановки всего приложения.
 
-[Получение токена](https://github.com/settings/tokens/new)
+## Домены и границы контекстов:
 
-```bash
-kubectl create secret docker-registry ghcr --docker-server=https://ghcr.io --docker-username=<github_username> --docker-password=<github_token> -n default
-```
+* Домен: управление устройствами
+  * Контекст: включение\выключение устройства
+  * Контекст: установка необходых параметров устройства
+* Домен: мониторинг параметров
+  * Контекст: получение данных с датчиков
+  * Контекст: предоставление данных о текущих параметрах датчиков
+ 
+## Плюсы текущего решения
+* ТСО монолита ниже чем у микросервесной инфраструктуры
+* Требуется меньше DevOps ресурсов на обслуживание и построение build pipiline
+* Проще построить механизм трассировки событий
 
-## Установка API GW kusk
+## Минусы текущего решения
+* Невозможно масштабировать отдельные элементы системы, масштабироваться должен весь монолит
+* При горизонтальном масштабировании монолита требуется организовать общий кэш, устройство которого для монолита сложнее чем для отдельно взятого микросервиса
+* Сильная связанность бизнес логики в коде
+* Внесение любых изменений в код требует:
+  * Регрешен тестирование всего функционала
+  * Ре-деплой всего приложения
+  * В случае критических ошибок будет недоступено все приложение, а не отдельные его части как в случае с микросервисами 
 
-[Install Kusk CLI](https://docs.kusk.io/getting-started/install-kusk-cli)
+## Подзадание 1.2: Архитектура микросервисов
 
-```bash
-kusk cluster install
-```
+C4 — Уровень контейнеров (Containers) [c4_container.puml](c4_container.puml)
 
-## Смена адреса образа в helm chart
+C4 — Уровень компонентов (Components) [c4_component.puml](c4_component.puml) на примере контейнера "Управление устройствами"
 
-После того как вы сделали форк репозитория и у вас в репозитории отработал GitHub Action. Вам нужно получить адрес образа <https://github.com/><github_username>/architecture-sprint-3/pkgs/container/architecture-sprint-3
+C4 — Уровень кода (Code) [c4_code.puml](c4_code.puml) на примере контейнера "Устройства"
 
-Он выглядит таким образом
-```ghcr.io/<github_username>/architecture-sprint-3:latest```
+## Подзадание 1.3: ER-диаграмма
 
-Замените адрес образа в файле `helm/smart-home-monolith/values.yaml` на полученный файл:
+[er.puml](er.puml)
 
-```yaml
-image:
-  repository: ghcr.io/<github_username>/architecture-sprint-3
-  tag: latest
-```
+## Подзадание 1.4: Создание и документирование API
 
-## Настройка terraform
+# Управление устройствами
 
-[Установите Terraform](https://yandex.cloud/ru/docs/tutorials/infrastructure-management/terraform-quickstart#install-terraform)
+OpenAPI: [device.open-api.yaml](device.open-api.yaml)
 
-Создайте файл ~/.terraformrc
+AsyncAPI: [device.async-api.yaml](device.async-api.yaml)
 
-```hcl
-provider_installation {
-  network_mirror {
-    url = "https://terraform-mirror.yandexcloud.net/"
-    include = ["registry.terraform.io/*/*"]
-  }
-  direct {
-    exclude = ["registry.terraform.io/*/*"]
-  }
-}
-```
+# Телеметрия
 
-## Применяем terraform конфигурацию
+OpenAPI: [telemetry.open-api.yaml](telemetry.open-api.yaml)
 
-```bash
-cd terraform
-terraform init
-terraform apply
-```
-
-## Настройка API GW
-
-```bash
-kusk deploy -i api.yaml
-```
-
-## Проверяем работоспособность
-
-```bash
-kubectl port-forward svc/kusk-gateway-envoy-fleet -n kusk-system 8080:80
-curl localhost:8080/hello
-```
-
-## Delete minikube
-
-```bash
-minikube delete
-```
+AsyncAPI: [telemetry.async-api.yaml](telemetry.async-api.yaml)

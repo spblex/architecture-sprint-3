@@ -1,0 +1,15 @@
+@startuml c1
+title Умный дом: C4 - Context
+
+!include <C4/C4_Container>
+
+Person(user, "Пользователь")
+Person(admin, "Администратор")
+System(system, "Система Умный дом", "Управление устройствами")
+System_Ext(device, "Устройство", "Управление датчиками")
+
+Rel(user, system, "Управляет состоянием дома")
+Rel(admin, system, "Управляет Пользователями")
+Rel(system, device, "Управляет устройствами")
+
+@enduml

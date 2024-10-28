@@ -1,0 +1,28 @@
+asyncapi: 3.0.0
+info:
+  title: Телеметрия
+  version: 1.0
+channels:
+  telemetry:
+    address: telemetry
+    messages:
+      subscribe.message:
+        name: telemetry
+        title: Получает данные телеметрии
+        payload:
+          type: object
+          properties:
+            data:
+              type: object
+            device_id:
+              type: integer
+          examples:
+            - device_id: 1
+              data: 123
+operations:
+  telemetry.subscribe:
+    action: receive
+    channel:
+      $ref: '#/channels/telemetry'
+    messages:
+      - $ref: '#/channels/telemetry/messages/subscribe.message'
